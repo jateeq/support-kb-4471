@@ -1,0 +1,63 @@
+---
+layout: runbook
+title: '#4471 split · three problems, three tickets'
+owner: jateeq
+status: open
+reviewed: 2026-11-18
+signature: v1.eyJzdG9yeSI6Im9mZiIsInN1YiI6IjU3ODIiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC1pdC1zaG93cyIsImlhdCI6MTc5NTAzMTI0OSwiZXhwIjoxNzk1MTE3NjQ5fQ.j5AFVjDxRByqDCaDijtfnJ4si5J3GuzdPm9YP9ZMnJY
+---
+
+<script>
+  import SplitTable from '#lib/kb/SplitTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const repo = 'https://github.com/jateeq/support-kb-4471/issues';
+  const issues = {
+    parser: { label: '#1', href: `${repo}/1` },
+    hint: { label: '#2', href: `${repo}/2` },
+    clock: { label: '#3', href: `${repo}/3` },
+  };
+</script>
+
+[#4471](/kb/incidents/4471) is marked known, with one fix queued. Its reports hold more than one
+problem. The desk merged them because their subject lines matched
+([decision 0001](/kb/decisions/0001-dedupe-by-subject)), and a subject line says what the customer
+saw, which can come from different bugs. This page splits #4471 by what caused each report and
+links each problem to its own ticket.
+
+<Callout kind="warn">
+The queued parser fix closes only the first row below. The other rows stay broken after it ships.
+</Callout>
+
+## What #4471 holds
+
+<SplitTable ticket={4471} {issues} />
+
+## How each report is placed
+
+A report is placed by its tenant and the way it came in, and by what its body says. The intake
+tag is a guess from the reporter's browser, so this page does not use it.
+
+- **`parser`**: the shared parser reads every date month first, and these tenants write the day
+  first. Day and month swap: a booking for 7 April goes out as 4 July. It covers app and email
+  reports from every day-first tenant, and form reports from tenants on booking-v2, whose hint
+  already says `DD/MM/YYYY`.
+- **`hint`**: the booking-v3 form prints `MM/DD/YYYY` under its date field. Customers of a
+  day-first tenant follow the hint, and the form reads what they typed the tenant's way. This
+  covers reports that came in through the form of a tenant on booking-v3. The parser fix does not
+  touch it, because the form receives the wrong input.
+- **`clock`**: the booking moves by exactly one day, with day and month in the right place. The
+  desk read these bodies as a one-day move and listed them in its notes. One customer in Lisbon
+  and one in Toronto saw different days for the same meeting, so this is a time zone problem. The
+  desk filed these reports under `parser` by tenant, and the parser fix does not touch them either.
+
+## What to do on the desk
+
+- Do not merge a new date report into #4471 on subject alone. Place it with the
+  [triage explorer](/kb/triage/dedupe) first, then merge it into the ticket for its problem.
+- When a body describes a one-day move, add its id to the desk notes, so the table above counts it
+  under `clock`.
+- Keep #4471 open until the tickets for all three problems are closed.
+
+<RenderStamp {signature} />
