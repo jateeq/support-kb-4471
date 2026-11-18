@@ -14,20 +14,23 @@ signature: v1.eyJzdG9yeSI6Im9mZiIsInN1YiI6IjU3ODIiLCJhdWQiOiJjaGFsbGVuZ2U6d2hhdC
 
   const repo = 'https://github.com/jateeq/support-kb-4471/issues';
   const issues = {
-    parser: { label: '#1', href: `${repo}/1` },
-    hint: { label: '#2', href: `${repo}/2` },
-    clock: { label: '#3', href: `${repo}/3` },
+    parser: { label: '#1', href: `${repo}/1`, state: 'fixed' },
+    hint: { label: '#2', href: `${repo}/2`, state: "won't fix" },
+    clock: { label: '#3', href: `${repo}/3`, state: 'open' },
   };
 </script>
 
-[#4471](/kb/incidents/4471) is marked known, with one fix queued. Its reports hold more than one
-problem. The desk merged them because their subject lines matched
+[#4471](/kb/incidents/4471) was marked known, with one fix queued, and closed on 5 October when
+that fix shipped. Its reports hold more than one problem. The desk merged them because their subject lines matched
 ([decision 0001](/kb/decisions/0001-dedupe-by-subject)), and a subject line says what the customer
 saw, which can come from different bugs. This page splits #4471 by what caused each report and
 links each problem to its own ticket.
 
 <Callout kind="warn">
-The queued parser fix closes only the first row below. The other rows stay broken after it ships.
+#4471 is closed, but one problem in it is still open. Engineering fixed the parser
+(<code>fix(dates): parse dd/mm for eu locales</code>) and retired the booking-v3 form, so the hint problem
+will not be fixed and cannot recur. The engineering update does not mention the one-day moves (<code>clock</code>), and the
+parser fix does not touch them.
 </Callout>
 
 ## What #4471 holds
@@ -54,10 +57,11 @@ tag is a guess from the reporter's browser, so this page does not use it.
 
 ## What to do on the desk
 
-- Do not merge a new date report into #4471 on subject alone. Place it with the
+- Do not merge a new date report into a ticket on subject alone. Place it with the
   [triage explorer](/kb/triage/dedupe) first, then merge it into the ticket for its problem.
 - When a body describes a one-day move, add its id to the desk notes, so the table above counts it
   under `clock`.
-- Keep #4471 open until the tickets for all three problems are closed.
+- Merge new one-day moves into the `clock` ticket, which stays open after #4471 closed.
+- Before you close a merged ticket, check that every problem in it has a fix or a decision.
 
 <RenderStamp {signature} />

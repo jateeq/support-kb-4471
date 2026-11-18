@@ -5,8 +5,9 @@
   import { tenantOf } from '#lib/kb/locales';
   import { mistagged, splitTicket, type Problem } from '#lib/kb/split';
 
-  // `issues` maps each problem to the ticket filed for it: { parser: { label, href }, … }.
-  let { ticket, issues }: { ticket: number; issues: Partial<Record<Problem, { label: string; href: string }>> } = $props();
+  // `issues` maps each problem to the ticket filed for it: { parser: { label, href, state }, … }.
+  type Issue = { label: string; href: string; state?: string };
+  let { ticket, issues }: { ticket: number; issues: Partial<Record<Problem, Issue>> } = $props();
 
   const split = $derived(splitTicket(reports as Report[], tenantOf, notes.oneDayMove, ticket));
   const dupes = $derived(split.rows - split.merged.length);
@@ -27,7 +28,7 @@
 
 <table>
   <thead>
-    <tr><th>problem</th><th>reports</th><th>channels</th><th>tenants</th><th>seen</th><th>ticket</th></tr>
+    <tr><th>problem</th><th>reports</th><th>channels</th><th>tenants</th><th>seen</th><th>ticket</th><th>state</th></tr>
   </thead>
   <tbody>
     {#each split.groups as g (g.problem)}
@@ -39,6 +40,7 @@
         <td class="small" title={g.tenants.join(', ')}>{g.tenants.length}</td>
         <td class="small">{g.firstSeen} → {g.lastSeen}</td>
         <td>{#if issue}<a href={issue.href}>{issue.label}</a>{:else}no ticket yet{/if}</td>
+        <td class="small">{issue?.state ?? ''}</td>
       </tr>
     {/each}
   </tbody>
