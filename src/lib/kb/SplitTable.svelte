@@ -44,6 +44,12 @@
   </tbody>
 </table>
 
+{#each split.groups as g (g.problem)}
+  {#each Object.entries(g.alsoIn) as [filed, n] (filed)}
+    <p class="note">The {n} <code>{g.problem}</code> reports also count under <code>{filed}</code>, where the desk files them by tenant.</p>
+  {/each}
+{/each}
+
 {#each placed as g (g.problem)}
   {@const off = mistagged(g)}
   {#if off}
